@@ -1,0 +1,28 @@
+# --------------------
+# Node Files
+# --------------------
+.nodemonignore
+npm-debug.log
+node_modules/
+
+# --------------------
+# SASS Files
+# --------------------
+.sass-cache/
+
+# --------------------
+# Bower Files
+# --------------------
+.bower-*/
+bower_components
+
+# --------------------
+# App Files
+# --------------------
+data/
+test/coverage/
+modules/public/
+modules/views/
+/public/build/
+/packages/contrib/
+#/packages/**/**/public/assets/lib

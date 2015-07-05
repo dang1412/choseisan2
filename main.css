@@ -1,0 +1,17 @@
+#create_event {
+  margin-top: 100px;
+}
+#create_event .dates .date i {
+  float: right;
+  cursor: pointer;
+  display: none;
+}
+#create_event .dates .date:hover i {
+  display: inline-block;
+}
+#answer_event {
+  margin-top: 100px;
+}
+#answer_event .event-name {
+  font-size: 30px;
+}

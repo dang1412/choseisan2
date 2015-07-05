@@ -1,0 +1,46 @@
+<div class="create_event" id="create_event" data-ng-controller="createEventController">
+  <form data-ng-submit="createEvent()">
+    <div class="form-group">
+      <label for="eventName">Event Name</label>
+      <input class="form-control" id="eventName" data-ng-model="vm.eventName" placeholder="Name">
+    </div>
+    <div class="form-group">
+      <label for="eventDescription">Description</label>
+      <textarea class="form-control" id="eventDescription" data-ng-model="vm.eventDescription"></textarea>
+    </div>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox"> Subscribe
+      </label>
+    </div>
+    <div class="form-group">
+      <label for="subscribeEmail">Email</label>
+      <input type="email" class="form-control" id="subscribeEmail" data-ng-model="vm.subscribeEmail" placeholder="Email">
+    </div>
+
+    <hr>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="list-group dates">
+          Pick Dates
+          <a ng-repeat="date in vm.dates" class="list-group-item date" data-ng-class="{active: $index === vm.activeDateIndex}" data-ng-click="vm.activeDateIndex = $index">
+            {{date}} <i class="fa fa-times" data-ng-click="removeDate($index)"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-md-8">
+        <div id="datetimepicker"></div>
+        <div class="form-group">
+          <label for="dateDescription">Description</label>
+          <textarea class="form-control" id="dateDescription" data-ng-model="dateDescription"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-default">Create Event</button>
+
+  </form>
+
+
+</div>
