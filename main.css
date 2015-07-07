@@ -15,3 +15,13 @@
 #answer_event .event-name {
   font-size: 30px;
 }
+#answer_event .table .name-header {
+  cursor: pointer;
+  color: green;
+}
+#answer_event .modal .answer-date {
+  margin-top: 10px;
+}
+#answer_event .modal .answer-check {
+  margin-top: 10px;
+}

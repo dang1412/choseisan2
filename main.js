@@ -28,7 +28,7 @@ choseisanApp.config(function($stateProvider, $urlRouterProvider) {
 
 // Setup Controller
 choseisanApp.controller('createEventController', ['$scope', createEventController])
-  .controller('answerEventController', ['$scope', '$stateParams', '$firebaseObject', answerEventController]);
+  .controller('answerEventController', ['$scope', '$stateParams', '$firebaseObject', '$firebaseArray', answerEventController]);
 
 function createEventController ($scope) {
   $scope.vm = {
@@ -73,10 +73,45 @@ function createEventController ($scope) {
   })
 }
 
-function answerEventController ($scope, $stateParams, $firebaseObject) {
+function answerEventController ($scope, $stateParams, $firebaseObject, $firebaseArray) {
   var _eventId = $stateParams.eventId;
   // download the data into a local object
   var ref = new Firebase('https://shining-fire-6123.firebaseio.com/projects/choseisan2/' + _eventId);
-  $scope.vm = $firebaseObject(ref);
+  $scope.vm = {}; // Init scope's view model variable
+  $scope.vm.eventData = $firebaseObject(ref);  // Display event informations
+  $scope.vm.users = $firebaseArray(ref.child('Users')); // Use Angularfire - 3 ways binding with Event's Users
+  //usersSync.$bindTo( $scope, 'vm.users' );
+  $scope.vm.pickingUser = {name: '', answers: [], notes: ''}; // User data that display in modal
+
+  // functions
+  $scope.upsertUser = upsertUser;
+  $scope.pickUser = pickUser;
+
+  // functions define
+  function upsertUser () {
+    // checking if pickingUser is in $scope.vm.users
+    var users = $scope.vm.users;
+    var pickingUser = $scope.vm.pickingUser;
+    for (var i = 0; i < users.length; i ++) {
+      if (users[i].name === pickingUser.name) break;
+    }
+    if (i < users.length) {
+      // update
+      users[i].name = pickingUser.name;
+      users[i].answers = pickingUser.answers;
+      users[i].notes = pickingUser.notes;
+      users.$save(i);
+    }
+    else {
+      // add
+      users.$add( pickingUser );
+    }
+  }
+
+  function pickUser (index) {
+    $scope.vm.pickingUser.name = $scope.vm.users[ index ].name;
+    $scope.vm.pickingUser.answers = $scope.vm.users[ index ].answers;
+    $scope.vm.pickingUser.notes = $scope.vm.users[ index ].notes;
+  }
 
 }
