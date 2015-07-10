@@ -1,0 +1,17 @@
+<div class="row">
+  <div class="col-md-4">
+    <div class="list-group dates">
+      <a ng-repeat="date in dates" class="list-group-item date" data-ng-class="{active: $index === activeDateIndex}" data-ng-click="chooseDate($index)">
+        {{date}} <i class="fa fa-times" data-ng-click="removeDate($index)"></i>
+      </a>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <div id="datetimepicker"></div>
+    <div class="form-group">
+      <label for="dateDescription">Description</label>
+      <textarea class="form-control" id="dateDescription" data-ng-model="dateDescription"></textarea>
+    </div>
+  </div>
+</div>

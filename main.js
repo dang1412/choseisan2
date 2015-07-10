@@ -30,6 +30,9 @@ choseisanApp.config(function($stateProvider, $urlRouterProvider) {
 choseisanApp.controller('createEventController', ['$scope', createEventController])
   .controller('answerEventController', ['$scope', '$stateParams', '$firebaseObject', '$firebaseArray', answerEventController]);
 
+// Directives
+choseisanApp.directive('uiPickDates', uiPickDatesDirective);
+
 function createEventController ($scope) {
   $scope.vm = {
     eventName: '',
@@ -39,7 +42,6 @@ function createEventController ($scope) {
   }
 
   $scope.createEvent = createEvent;
-  $scope.removeDate = removeDate;
 
   function createEvent () {
     var eventId = Math.random().toString(34).slice(2);
@@ -52,25 +54,6 @@ function createEventController ($scope) {
       }
     });
   }
-
-  function removeDate(ind) {
-    $scope.vm.dates.splice(ind, 1);
-  }
-
-  var datetimepicker = $('#datetimepicker').datetimepicker({
-    inline: true,
-    sideBySide: true
-  });
-  datetimepicker.on('dp.change', function () {
-    var dates = $scope.vm.dates;
-    var date = datetimepicker.data().date;
-    if (dates.indexOf(date) < 0) {
-      dates.push( date );
-      dates.sort();
-    }
-    $scope.vm.activeDateIndex = dates.indexOf(date);
-    $scope.$apply();
-  })
 }
 
 function answerEventController ($scope, $stateParams, $firebaseObject, $firebaseArray) {
@@ -114,4 +97,50 @@ function answerEventController ($scope, $stateParams, $firebaseObject, $firebase
     $scope.vm.pickingUser.notes = $scope.vm.users[ index ].notes;
   }
 
+}
+
+function uiPickDatesDirective ($timeout) {
+
+  return {
+    restrict: 'EA',
+    require: '?ngModel',
+    templateUrl: 'partials/uiPickDates.html',
+    compile: function compile() {
+
+      // Require CodeMirror
+
+      return postLink;
+    }
+  };
+
+  function postLink (scope, iElement, iAttrs, ngModel) {
+    window.dsc = scope;
+    scope.dates = [];
+    scope.removeDate = removeDate;
+    scope.chooseDate = chooseDate;
+
+    function chooseDate(ind) {
+      scope.activeDateIndex = ind;
+    }
+    function removeDate(ind) {
+      scope.dates.splice(ind, 1);
+    }
+
+    var datetimepicker = iElement.find('#datetimepicker').datetimepicker({
+      inline: true,
+      sideBySide: true
+    });
+    datetimepicker.on('dp.change', function () {
+
+      var dates = scope.dates;
+      var date = datetimepicker.data().date;
+      if (dates.indexOf(date) < 0) {
+        dates.push( date );
+        dates.sort();
+      }
+      scope.activeDateIndex = dates.indexOf(date);
+      ngModel.$setViewValue(dates);
+      scope.$apply();
+    })
+  }
 }
