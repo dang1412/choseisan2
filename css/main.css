@@ -17,11 +17,18 @@
 }
 #answer_event .table .name-header {
   cursor: pointer;
-  color: green;
+  color: blue;
 }
 #answer_event .modal .answer-date {
-  margin-top: 10px;
+  top: 8px;
+  position: relative;
 }
-#answer_event .modal .answer-check {
-  margin-top: 10px;
+#answer_event .modal .ans-btns {
+  float: right;
+}
+#answer_event .modal .list-group-item {
+  overflow: auto;
+}
+#answer_event .answer-btn {
+  text-align: center;
 }
