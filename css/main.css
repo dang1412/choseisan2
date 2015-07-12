@@ -18,17 +18,25 @@
 #answer_event .table .name-header {
   cursor: pointer;
   color: blue;
+  max-width: 50px;
 }
-#answer_event .modal .answer-date {
-  top: 8px;
-  position: relative;
-}
-#answer_event .modal .ans-btns {
+#answer_event .modal .remove {
   float: right;
 }
-#answer_event .modal .list-group-item {
-  overflow: auto;
+#answer_event .modal .ans-btns .note {
+  margin: 5px;
+}
+#answer_event .modal .list-group-item .popover {
+  width: 200px;
 }
 #answer_event .answer-btn {
   text-align: center;
+}
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
 }

@@ -23,21 +23,36 @@
     .name-header {
       cursor: pointer;
       color: blue;
+      max-width: 50px;
     }
   }
   .modal {
-    .answer-date {
-      top: 8px;
-      position: relative;
-    }
-    .ans-btns {
+    .remove {
       float: right;
     }
+    .answer-date {
+    }
+    .ans-btns {
+      .note {
+        margin: 5px;
+      }
+    }
     .list-group-item {
-      overflow: auto;
+      .popover {
+        width: 200px;
+      }
     }
   }
   .answer-btn {
     text-align: center;
   }
+}
+
+.clearfix:after {
+	visibility: hidden;
+	display: block;
+	font-size: 0;
+	content: " ";
+	clear: both;
+	height: 0;
 }
