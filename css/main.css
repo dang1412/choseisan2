@@ -10,7 +10,7 @@
   display: inline-block;
 }
 #answer_event {
-  margin-top: 100px;
+  margin-top: 50px;
 }
 #answer_event .event-name {
   font-size: 30px;
@@ -23,14 +23,23 @@
 #answer_event .modal .remove {
   float: right;
 }
+#answer_event .modal .remove h4 {
+  display: inline-block;
+}
 #answer_event .modal .ans-btns .note {
   margin: 5px;
 }
 #answer_event .modal .list-group-item .popover {
   width: 200px;
 }
+#answer_event .modal .list-group-item .editmemo {
+  margin: 0;
+}
 #answer_event .answer-btn {
   text-align: center;
+}
+#answer_event .note {
+  cursor: pointer;
 }
 .clearfix:after {
   visibility: hidden;

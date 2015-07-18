@@ -29,19 +29,24 @@
 
 <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"/>
 <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet"/>
-<link href="bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
-<link href="bower_components/angular-growl-v2/build/angular-growl.min.css" rel="stylesheet"/>
+<link href="bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" />
+<link href="bower_components/angular-growl-v2/build/angular-growl.min.css"/>
 
 <link rel="stylesheet" href="css/main.css" />
 <script src="js/main.js"></script>
 
 </head>
-<body data-ng-app="choseisanApp">
+<body data-ng-app="">
+
   <div data-ng-include="'partials/header.html'"></div>
 
   <div class="container">
-    <div growl></div>
-    <div ui-view></div>
+    <form>
+      <div class="form-group">
+        <label for="attender-name" class="control-label">Name</label>
+        <input type="text" class="form-control" id="attender-name" data-ng-model="vm.pickingUser.name">
+      </div>
+    </form>
   </div>
 
 

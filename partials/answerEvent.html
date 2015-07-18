@@ -1,8 +1,8 @@
 <div class="answer_event" id="answer_event" data-ng-controller="answerEventController">
 
-  <button type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">
+  <!-- <a type="button" class="btn btn-lg btn-danger" rel="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">
     Click to toggle popover
-  </button>
+  </a> -->
 
   <div class="event-name">{{vm.eventData.eventName}}</div>
   <div class="event-des">{{vm.eventData.eventDescription}}</div>
@@ -22,6 +22,9 @@
           <i class="fa fa-circle-o" data-ng-show="user.answers[date_ind].ans === '1'"></i>
           <i class="fa fa-close" data-ng-show="user.answers[date_ind].ans === '2'"></i>
         </label>
+        <a class="note" data-ng-show="user.answers[date_ind].note" data-placement="top" rel="popover" data-trigger="hover" data-content="{{user.answers[date_ind].note}}">
+          <i class="fa fa-file-text-o"></i>
+        </a>
       </td>
     </tr>
   </table>
@@ -34,7 +37,12 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="btn btn-danger remove" data-dismiss="modal" aria-label="Remove">Remove</button>
+          <button type="button" class="btn btn-danger remove" data-ng-hide="confirmDelete" data-ng-click="confirmDelete = true" aria-label="Remove">Remove</button>
+          <div class="confirm-delete remove" data-ng-show="confirmDelete">
+            <h4><span class="label label-warning">Are you sure want to delete ?</span></h4>
+            <span class="btn btn-danger" data-ng-click="removeUser(vm.pickingUser.index);confirmDelete = false" data-dismiss="modal">Ok</span>
+            <span class="btn btn-default" data-ng-click="confirmDelete = false">Cancel</span>
+          </div>
           <h4 class="modal-title" id="exampleModalLabel">{{vm.eventData.eventName}}</h4>
         </div>
         <div class="modal-body">
@@ -47,14 +55,15 @@
             <div class="form-group">
 
               <div class="list-group">
+                <!-- iterate all over dates -->
                 <div href="#" class="list-group-item clearfix" data-ng-repeat="date in vm.eventData.dates" on-repeat-rendered="pickUserRendered">
 
                   <div class="col-sm-6">
-                    <span class="answer-date">{{date}}</span>
+                    <h4><span class="answer-date label label-success">{{date}}</span></h4>
                   </div>
 
                   <div class="col-sm-6">
-                    <div class="btn-group ans-btns">
+                    <div class="btn-group ans-btns" data-ng-hide="editmemo[$index]">
                       <label class="btn btn-default" data-ng-class="{'btn-success': vm.pickingUser.answers[$index].ans === '0'}" data-ng-click="vm.pickingUser.answers[$index].ans = '0'">
                         <i class="fa fa-check"></i>
                       </label>
@@ -64,10 +73,13 @@
                       <label class="btn btn-default" data-ng-class="{'btn-danger': vm.pickingUser.answers[$index].ans === '2'}" data-ng-click="vm.pickingUser.answers[$index].ans = '2'">
                         <i class="fa fa-close"></i>
                       </label>
-                      <label class="note" data-ng-show="!vm.pickingUser.answers[$index].note"><i class="fa fa-pencil"></i></label>
-                      <button class="note" data-ng-show="vm.pickingUser.answers[$index].note" data-placement="top" data-toggle="popover" data-trigger="click" data-content="{{vm.pickingUser.answers[$index].note}}">
+                      <label class="note" data-ng-click="editmemo[$index]=true" data-ng-show="!vm.pickingUser.answers[$index].note"><i class="fa fa-pencil"></i></label>
+                      <a class="note" data-ng-click="editmemo[$index]=true" data-ng-show="vm.pickingUser.answers[$index].note" data-placement="top" rel="popover" data-trigger="hover" data-content="{{vm.pickingUser.answers[$index].note}}">
                         <i class="fa fa-file-text-o"></i>
-                      </button>
+                      </a>
+                    </div>
+                    <div class="form-group editmemo" data-ng-show="editmemo[$index]">
+                      <input type="text" data-ng-blur="editmemo[$index]=false" class="form-control" id="" placeholder="Note" data-ng-model="vm.pickingUser.answers[$index].note">
                     </div>
                   </div>
 

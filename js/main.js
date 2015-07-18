@@ -26,8 +26,8 @@ choseisanApp.config(function($stateProvider, $urlRouterProvider) {
     //$locationProvider.html5Mode(true);
   }])
   .config(['growlProvider', function (growlProvider) {
-    //growlProvider.globalTimeToLive(3000);
-    //growlProvider.globalDisableCountDown(true);
+    growlProvider.globalTimeToLive(3000);
+    growlProvider.globalDisableCountDown(true);
   }]);
 
 // Setup Controller
@@ -65,13 +65,13 @@ function createEventController ($scope) {
 function answerEventController ($scope, $stateParams, $firebaseObject, $firebaseArray, growl) {
   var finishedRender = false;
   var _eventId = $stateParams.eventId;
+
   // download the data into a local object
   var ref = new Firebase('https://shining-fire-6123.firebaseio.com/projects/choseisan2/' + _eventId);
   $scope.vm = {}; // Init scope's view model variable
   $scope.vm.eventData = $firebaseObject(ref);  // Display event informations
   $scope.vm.users = $firebaseArray(ref.child('Users')); // Use Angularfire - 3 ways binding with Event's Users
   $scope.vm.users.$watch( firebaseArrayWatch );
-  //usersSync.$bindTo( $scope, 'vm.users' );
   $scope.vm.pickingUser = {name: '', answers: [], notes: '', index: -1}; // User data that display in modal
 
   // functions
@@ -79,6 +79,8 @@ function answerEventController ($scope, $stateParams, $firebaseObject, $firebase
   $scope.pickUser = pickUser;
   $scope.resetPick = resetPick;
   $scope.pickUserRendered = pickUserRendered;
+  $scope.removeUser = removeUser;
+
 
   // functions define
   function upsertUser () {
@@ -114,12 +116,16 @@ function answerEventController ($scope, $stateParams, $firebaseObject, $firebase
   }
 
   function pickUserRendered () {
-    $('[data-toggle="popover"]').popover();
+    $('[rel="popover"]').popover();
     finishedRender = true;
   }
 
   function firebaseArrayWatch (info) {
     if (!finishedRender) return;
+    if (info.event === 'child_removed') {
+     growl.error('An answer has been removed!');
+     return;
+   }
     var username = $scope.vm.users.$getRecord(info.key).name;
     var message = '';
     if (info.event === 'child_changed') {
@@ -129,6 +135,15 @@ function answerEventController ($scope, $stateParams, $firebaseObject, $firebase
       growl.success(username + ' has added answer!');
     }
   }
+
+  function removeUser (index) {
+    var users = $scope.vm.users;
+    users.$remove(index);
+  }
+
+  // controll variables
+  $scope.editmemo = []; //
+  $scope.confirmDelete = false;
 
 }
 
