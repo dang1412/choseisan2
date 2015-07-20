@@ -1,3 +1,7 @@
+// Constants
+var FIREBASE_ROOT = 'https://shining-fire-6123.firebaseio.com/',
+  FIREBASE_APP = 'https://shining-fire-6123.firebaseio.com/projects/choseisan2/';
+
 // Define Module with dependencies
 var choseisanApp = angular.module('choseisanApp',['firebase','ui.router', 'angular-growl', 'ngAnimate']);
 
@@ -25,6 +29,7 @@ choseisanApp.config(function($stateProvider, $urlRouterProvider) {
   .config(["$locationProvider", function($locationProvider) {
     //$locationProvider.html5Mode(true);
   }])
+  // Config growl notifications
   .config(['growlProvider', function (growlProvider) {
     growlProvider.globalTimeToLive(3000);
     growlProvider.globalDisableCountDown(true);
@@ -32,12 +37,17 @@ choseisanApp.config(function($stateProvider, $urlRouterProvider) {
 
 // Setup Controller
 choseisanApp.controller('createEventController', ['$scope', createEventController])
-  .controller('answerEventController', ['$scope', '$stateParams', '$firebaseObject', '$firebaseArray', 'growl', answerEventController]);
+  .controller('answerEventController', ['$scope', '$stateParams', '$firebaseObject', '$firebaseArray', 'growl', 'User', answerEventController])
+  .controller('chatController', ['$scope', '$stateParams', '$firebaseArray', 'User', chatController])
+  .controller('userController', ['$scope', '$rootScope', '$timeout', 'User', userController]);
 
 // Directives
 choseisanApp.directive('uiPickDates', uiPickDatesDirective);
 
 choseisanApp.directive('onRepeatRendered', onRepeatRendered);
+
+// Services
+choseisanApp.factory('User', UserService);
 
 function createEventController ($scope) {
   $scope.vm = {
@@ -62,15 +72,16 @@ function createEventController ($scope) {
   }
 }
 
-function answerEventController ($scope, $stateParams, $firebaseObject, $firebaseArray, growl) {
+function answerEventController ($scope, $stateParams, $firebaseObject, $firebaseArray, growl, User) {
   var finishedRender = false;
-  var _eventId = $stateParams.eventId;
+  var _eventId = $stateParams.eventId;  // get parameter from path
+  $scope._eventId = _eventId;
 
   // download the data into a local object
-  var ref = new Firebase('https://shining-fire-6123.firebaseio.com/projects/choseisan2/' + _eventId);
+  var ref = new Firebase(FIREBASE_APP + _eventId);
   $scope.vm = {}; // Init scope's view model variable
   $scope.vm.eventData = $firebaseObject(ref);  // Display event informations
-  $scope.vm.users = $firebaseArray(ref.child('Users')); // Use Angularfire - 3 ways binding with Event's Users
+  $scope.vm.users = $firebaseArray(ref.child('Users')); // Use Angularfire array - 3 ways binding with Event's Users
   $scope.vm.users.$watch( firebaseArrayWatch );
   $scope.vm.pickingUser = {name: '', answers: [], notes: '', index: -1}; // User data that display in modal
 
@@ -147,6 +158,97 @@ function answerEventController ($scope, $stateParams, $firebaseObject, $firebase
 
 }
 
+function chatController ($scope, $stateParams, $firebaseArray, User) {
+  var _eventId = $stateParams.eventId;
+  var chatRef = new Firebase(FIREBASE_APP + _eventId + '/chat');
+
+  $scope.vm.messages = $firebaseArray(chatRef);
+  $scope.User = User.getUserData() || null;
+
+  $scope.send = send;
+  $scope.formatTime = formatTime;
+
+
+  function send(text) {
+    if (!$scope.User) return;
+    var userdata = $scope.User.facebook;
+    var messageObj = {
+      user: {
+        id: userdata.id,
+        name: userdata.displayName
+      },
+      content: text,
+      timestamp: Date.now()
+    }
+    console.log(messageObj);
+    $scope.vm.messages.$add(messageObj);
+    $scope.message = '';
+  }
+
+  function formatTime (ts) {
+    return moment(ts).format('MMM Do dd, HH:mm:ss');
+  }
+
+  //
+  $scope.$on('loggedin', function () {
+    console.log( 'chatController logged in' );
+    $scope.User = User.getUserData();
+  });
+  $scope.$on('loggedout', function () {
+    console.log( 'chatController logged out' );
+    $scope.User = null;
+  });
+}
+
+function userController ($scope, $rootScope, $timeout, User) {
+  $scope.loginStatus = false;
+  $scope.displayName = '';
+
+  // export functions
+  $scope.login = login;
+  $scope.logout = logout;
+
+  // firebase authentication, TODO use User service to store login session
+  var appRef = new Firebase(FIREBASE_APP);
+  appRef.onAuth(function(authData) {
+    console.log(authData);
+    User.setUserData(authData); //  use User service to store login session
+    if (authData) {
+      $scope.loginStatus = true;
+      $scope.displayName = authData.facebook.displayName;
+      $timeout(function () {  // execute when $digest complete
+        $rootScope.$broadcast('loggedin');
+      });
+    }
+    else {
+      $scope.loginStatus = false;
+      $timeout(function () {  // execute when $digest complete
+        $rootScope.$broadcast('loggedout');
+      });
+    }
+  });
+
+  // functions definition
+  function login (provider) {
+    appRef.authWithOAuthPopup("facebook", function(error, authData) {
+      if (error) {
+        console.log(error);
+      }
+    });
+  }
+  function logout () {
+    appRef.unauth();
+  }
+
+  // rootScope handle login and logout
+  $rootScope.$on('loggedin', function () {
+    console.log( 'logged in' );
+  });
+  $rootScope.$on('loggedout', function () {
+    console.log( 'logged out' );
+  });
+}
+
 // Pick Dates Directive
 function uiPickDatesDirective ($timeout) {
 
@@ -199,7 +301,7 @@ function onRepeatRendered ($timeout) {
   return {
     restrict: 'A',
     link: function (scope, element, attrs) {
-      console.log( 'scope.$last', scope.$last );
+      //console.log( 'scope.$last', scope.$last );
       if (scope.$last === true) {
         $timeout(function () {
           //scope.$emit('ngRepeatFinished');
@@ -211,5 +313,21 @@ function onRepeatRendered ($timeout) {
         });
       }
     }
+  }
+}
+
+function UserService () {
+  var userData = null;
+  return {
+    getUserData: getUserData,
+    setUserData: setUserData
+  }
+
+  function getUserData () {
+    return userData;
+  }
+
+  function setUserData (udata) {
+    userData = udata;
   }
 }

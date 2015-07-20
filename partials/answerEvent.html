@@ -4,8 +4,14 @@
     Click to toggle popover
   </a> -->
 
-  <div class="event-name">{{vm.eventData.eventName}}</div>
-  <div class="event-des">{{vm.eventData.eventDescription}}</div>
+  <div class="event-head clearfix">
+    <div class="event-name pull-left">{{vm.eventData.eventName}}</div>
+    <a class="btn btn-edit-event"><i class="fa fa-pencil"></i></a>
+    <div class="answer-btn pull-right">
+      <span class="btn btn-default btn-lg" data-toggle="modal" data-target="#answerModal" data-ng-click="resetPick();"><i class="fa fa-pencil-square-o"></i>&nbsp;Answer</span>
+    </div>
+  </div>
+  <div class="event-des"><p>{{vm.eventData.eventDescription}}</p></div>
   <table class="table">
     <thead>
       <tr>
@@ -28,11 +34,52 @@
       </td>
     </tr>
   </table>
-  <div class="answer-btn">
-    <span class="btn btn-primary btn-lg" data-toggle="modal" data-target="#answerModal" data-ng-click="resetPick();">Answer</span>
+
+  <!-- Chat -->
+  <div data-ng-controller="chatController">
+    <div id="firechat-wrapper">
+      <!-- Chat contents -->
+      <div class="chat-contents">
+        <!-- <div class="media">
+          <div class="media-left">
+            <a href="#">
+              <img class="media-object picture" src="http://graph.facebook.com/{{User.facebook.id}}/picture" alt="...">
+            </a>
+          </div>
+          <div class="media-body">
+            <a href="#"><h4 class="media-heading name">{{User.facebook.displayName}}</h4></a>
+            <span class="livetimestamp">1234</span>
+            <p class="content">Chat Content, hello welcome! ^^<3)</p>
+          </div>
+        </div> -->
+
+        <div class="media" data-ng-repeat="message in vm.messages">
+          <div class="media-left">
+            <a href="#">
+              <img class="media-object picture" src="http://graph.facebook.com/{{message.user.id}}/picture" alt="...">
+            </a>
+          </div>
+          <div class="media-body">
+            <a href="#"><h4 class="media-heading name">{{message.user.name}}</h4></a>
+            <span class="livetimestamp">{{formatTime(message.timestamp)}}</span>
+            <p class="content">{{message.content}}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat input -->
+      <div class="chat-input">
+        <div class="input-group">
+          <textarea type="text" class="form-control" placeholder="Your message..." data-ng-model="message"></textarea>
+          <span class="input-group-btn btn-send" data-ng-click="send(message);">
+            <button class="btn btn-default" type="button">Send</button>
+          </span>
+        </div><!-- /input-group -->
+      </div>
+    </div>
   </div>
 
-  <!-- modal -->
+  <!-- Modal -->
   <div class="modal fade" id="answerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">

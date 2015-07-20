@@ -36,10 +36,33 @@
   margin: 0;
 }
 #answer_event .answer-btn {
-  text-align: center;
+  text-align: right;
 }
 #answer_event .note {
   cursor: pointer;
+}
+#answer_event #firechat-wrapper .picture {
+  border-radius: 100%;
+  width: 45px;
+  height: 45px;
+}
+#answer_event #firechat-wrapper .name {
+  font-size: 16px;
+  font-weight: bold;
+  display: inline-block;
+}
+#answer_event #firechat-wrapper .livetimestamp {
+  color: grey;
+  font-size: 12px;
+  margin-right: 5px;
+}
+#answer_event #firechat-wrapper .content {
+  padding: 10px;
+  border-radius: 10px;
+  background-color: aliceblue;
+}
+#answer_event #firechat-wrapper .chat-input .btn-send {
+  vertical-align: top;
 }
 .clearfix:after {
   visibility: hidden;

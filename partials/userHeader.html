@@ -1,0 +1,48 @@
+<div class="navbar-right" data-ng-controller="userController">
+
+  <form class="navbar-form navbar-right" id="login-form" role="form" data-ng-if="!loginStatus">
+  	<!-- <input type="hidden" name="redirect_to" value=""> -->
+  	<div class="btn-group login-group">
+
+  	  <a type="button" href="#!/auth/login" class="btn btn-success"><i class="fa fa-user"></i>&nbsp;Sign In</a>
+  	  <a type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></a>
+  	  <ul class="dropdown-menu" role="menu">
+  	  	<!-- <li><a href="#">
+  	    	<i class="fa fa-github"></i>&nbsp; Github
+  	    </a></li>
+  	    <li><a href="#">
+  	    	<i class="fa fa-linkedin"></i>&nbsp; LinkedIn
+  	    </a></li> -->
+  	    <li><a href="#" data-ng-click="login('facebook')">
+  	    	<i class="fa fa-facebook"></i>&nbsp; Facebook
+  	    </a></li>
+  	    <!-- <li><a href="#">
+  	    	<i class="fa fa-twitter"></i>&nbsp; Twitter
+  	    </a></li>
+  	    <li><a href="#">
+  	    	<i class="fa fa-google-plus"></i>&nbsp; Google+
+  	    </a></li> -->
+  	  </ul>
+  	</div>
+  </form>
+
+  <div data-ng-if="loginStatus">
+    <ul class="nav navbar-nav">
+      <li class="user user-menu">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          <i class="glyphicon glyphicon-user"></i>
+          <span>{{displayName}} <i class="caret"></i></span>
+        </a>
+        <!-- Dropdown menu -->
+        <ul class="dropdown-menu">
+          <li>
+            <a href="#" data-ng-click="logout();">Sign out</a>
+          </li>
+        </ul>
+
+      </li>
+
+    </ul>
+  </div>
+
+</div>

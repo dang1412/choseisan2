@@ -12,6 +12,12 @@
 <meta name="author" content="" />
 <meta name="viewport" content="width=device-width; initial-scale=1.0" />
 
+<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"/>
+<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<link href="bower_components/angular-growl-v2/build/angular-growl.min.css" rel="stylesheet"/>
+<link rel='stylesheet' href='https://cdn.firebase.com/libs/firechat/2.0.1/firechat.min.css' />
+
 <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular.js"></script>
@@ -26,18 +32,15 @@
 <script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
 <!-- AngularFire -->
 <script src="https://cdn.firebase.com/libs/angularfire/1.1.2/angularfire.min.js"></script>
-
-<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"/>
-<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet"/>
-<link href="bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
-<link href="bower_components/angular-growl-v2/build/angular-growl.min.css" rel="stylesheet"/>
+<!-- Firechat -->
+<script src='https://cdn.firebase.com/libs/firechat/2.0.1/firechat.min.js'></script>
 
 <link rel="stylesheet" href="css/main.css" />
 <script src="js/main.js"></script>
 
 </head>
 <body data-ng-app="choseisanApp">
-  <div data-ng-include="'partials/header.html'"></div>
+  <div data-ng-include="'partials/header.html'" data-ng-init="part = 'choseisan'"></div>
 
   <div class="container">
     <div growl></div>
