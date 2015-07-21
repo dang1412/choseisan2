@@ -1,0 +1,9 @@
+{
+  "name": "mean",
+  "dependencies": {
+    "eonasdan-bootstrap-datetimepicker": "latest",
+    "angular-growl-v2": "latest",
+    "angular-animate": "latest"
+
+  }
+}
