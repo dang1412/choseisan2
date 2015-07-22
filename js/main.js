@@ -255,7 +255,7 @@ function uiPickDatesDirective ($timeout) {
   return {
     restrict: 'EA',
     require: '?ngModel',
-    templateUrl: 'partials/uiPickDates.html',
+    templateUrl: '/choseisan2/partials/uiPickDates.html',
     compile: function compile() {
 
       // Require CodeMirror
