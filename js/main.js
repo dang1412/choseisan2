@@ -15,13 +15,13 @@ choseisanApp.config(function($stateProvider, $urlRouterProvider) {
         // HOME STATES AND NESTED VIEWS ========================================
         .state('home', {
             url: '/',
-            templateUrl: '/partials/createEvent.html'
+            templateUrl: '/choseisan2/partials/createEvent.html'
         })
 
         // ABOUT PAGE AND MULTIPLE NAMED VIEWS =================================
         .state('answers', {
 						url: '/:eventId',
-						templateUrl: '/partials/answerEvent.html'
+						templateUrl: '/choseisan2/partials/answerEvent.html'
         });
 
   })
