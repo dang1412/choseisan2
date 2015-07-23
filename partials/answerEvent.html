@@ -63,112 +63,35 @@
   <div data-ng-controller="chatController">
     <div id="firechat-wrapper">
       <!-- Chat contents -->
-      <div class="chat-contents">
-        <!-- <div class="media">
-          <div class="media-left">
-            <a href="#">
-              <img class="media-object picture" src="http://graph.facebook.com/{{User.facebook.id}}/picture" alt="...">
-            </a>
-          </div>
-          <div class="media-body">
-            <a href="#"><h4 class="media-heading name">{{User.facebook.displayName}}</h4></a>
-            <span class="livetimestamp">1234</span>
-            <p class="content">Chat Content, hello welcome! ^^<3)</p>
-          </div>
-        </div> -->
-
-        <div class="media" data-ng-repeat="message in vm.messages">
-          <div class="media-left">
-            <a href="#">
-              <img class="media-object picture" src="http://graph.facebook.com/{{message.user.id}}/picture" alt="...">
-            </a>
-          </div>
-          <div class="media-body">
-            <a href="#"><h4 class="media-heading name">{{message.user.name}}</h4></a>
-            <span class="livetimestamp">{{formatTime(message.timestamp)}}</span>
-            <p class="content">{{message.content}}</p>
+      <div class="chat-contents clearfix">
+        <div class="message-contain" data-ng-repeat="message in vm.messages">
+          <div class="media">
+            <div class="media-left">
+              <a href="#">
+                <img class="media-object picture" src="http://graph.facebook.com/{{message.user.id}}/picture" alt="...">
+              </a>
+            </div>
+            <div class="media-body">
+              <a href="#"><h4 class="media-heading name">{{message.user.name}}</h4></a>
+              <span class="livetimestamp">{{formatTime(message.timestamp)}}</span>
+              <p class="content">{{message.content}}</p>
+            </div>
           </div>
         </div>
+
       </div>
 
       <!-- Chat input -->
       <div class="chat-input">
-        <div class="input-group">
+        <div class="form-group">
           <textarea type="text" class="form-control" placeholder="Your message..." data-ng-model="message"></textarea>
-          <span class="input-group-btn btn-send" data-ng-click="send(message);">
-            <button class="btn btn-default" type="button">Send</button>
-          </span>
         </div><!-- /input-group -->
+        <span class="btn btn-default btn-send" data-ng-click="send(message);">Send</span>
       </div>
     </div>
   </div>
 
   <!-- Modal -->
-  <div class="modal fade" id="answerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="btn btn-danger remove" data-ng-hide="confirmDelete" data-ng-click="confirmDelete = true" aria-label="Remove">Remove</button>
-          <div class="confirm-delete remove" data-ng-show="confirmDelete">
-            <h4><span class="label label-warning">Are you sure want to delete ?</span></h4>
-            <span class="btn btn-danger" data-ng-click="removeUser(vm.pickingUser.index);confirmDelete = false" data-dismiss="modal">Ok</span>
-            <span class="btn btn-default" data-ng-click="confirmDelete = false">Cancel</span>
-          </div>
-          <h4 class="modal-title" id="exampleModalLabel">{{vm.eventData.eventName}}</h4>
-        </div>
-        <div class="modal-body">
-          <form>
-            <div class="form-group">
-              <label for="attender-name" class="control-label">Name</label>
-              <input type="text" class="form-control" id="attender-name" data-ng-model="vm.pickingUser.name">
-            </div>
-            <label class="control-label">Answers</label>
-            <div class="form-group">
-
-              <div class="list-group">
-                <!-- iterate all over dates -->
-                <div href="#" class="list-group-item clearfix" data-ng-repeat="date in vm.eventData.dates" on-repeat-rendered="pickUserRendered">
-
-                  <div class="col-sm-6">
-                    <h4><span class="answer-date label label-success">{{date.date}}</span></h4>
-                  </div>
-
-                  <div class="col-sm-6">
-                    <div class="btn-group ans-btns" data-ng-hide="editmemo[$index]">
-                      <label class="btn btn-default" data-ng-class="{'btn-success': vm.pickingUser.answers[$index].ans === '0'}" data-ng-click="vm.pickingUser.answers[$index].ans = '0'">
-                        <i class="fa fa-check"></i>
-                      </label>
-                      <label class="btn btn-default" data-ng-class="{'btn-warning': vm.pickingUser.answers[$index].ans === '1'}" data-ng-click="vm.pickingUser.answers[$index].ans = '1'">
-                        <i class="fa fa-circle-o"></i>
-                      </label>
-                      <label class="btn btn-default" data-ng-class="{'btn-danger': vm.pickingUser.answers[$index].ans === '2'}" data-ng-click="vm.pickingUser.answers[$index].ans = '2'">
-                        <i class="fa fa-close"></i>
-                      </label>
-                      <label class="note" data-ng-click="editmemo[$index]=true" data-ng-show="!vm.pickingUser.answers[$index].note"><i class="fa fa-pencil"></i></label>
-                      <a class="note" data-ng-click="editmemo[$index]=true" data-ng-show="vm.pickingUser.answers[$index].note" data-placement="top" rel="popover" data-trigger="hover" data-content="{{vm.pickingUser.answers[$index].note}}">
-                        <i class="fa fa-file-text-o"></i>
-                      </a>
-                    </div>
-                    <div class="form-group editmemo" data-ng-show="editmemo[$index]">
-                      <input type="text" data-ng-blur="editmemo[$index]=false" class="form-control" id="" placeholder="Note" data-ng-model="vm.pickingUser.answers[$index].note">
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-            </div>
-            <div class="form-group">
-              <label for="attender-notes" class="control-label">Notes</label>
-              <textarea class="form-control" id="attender-notes" data-ng-model="vm.pickingUser.notes"></textarea>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary btn-lg btn-block" data-dismiss="modal" data-ng-click="upsertUser()">OK</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div data-ng-include="'/choseisan2/partials/answerModal.html'"></div>
   <!-- end modal -->
 </div>

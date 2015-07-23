@@ -74,8 +74,8 @@
   border-radius: 10px;
   background-color: aliceblue;
 }
-#answer_event #firechat-wrapper .chat-input .btn-send {
-  vertical-align: top;
+#answer_event #firechat-wrapper .chat-input {
+  text-align: right;
 }
 .clearfix:after {
   visibility: hidden;

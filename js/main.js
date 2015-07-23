@@ -42,9 +42,9 @@ choseisanApp.config(function($stateProvider, $urlRouterProvider) {
   }]);
 
 // Setup Controller
-choseisanApp.controller('createEventController', ['$scope', '$stateParams', '$firebaseObject', createEventController])
+choseisanApp.controller('createEventController', ['$scope', '$stateParams', '$firebaseObject', 'growl', createEventController])
   .controller('answerEventController', ['$scope', '$stateParams', '$firebaseObject', '$firebaseArray', 'growl', 'User', answerEventController])
-  .controller('chatController', ['$scope', '$stateParams', '$firebaseArray', 'User', chatController])
+  .controller('chatController', ['$scope', '$stateParams', '$firebaseArray', 'User', 'growl', chatController])
   .controller('userController', ['$scope', '$rootScope', '$timeout', 'User', userController]);
 
 // Directives
@@ -55,7 +55,7 @@ choseisanApp.directive('onRepeatRendered', onRepeatRendered);
 // Services
 choseisanApp.factory('User', UserService);
 
-function createEventController ($scope, $stateParams, $firebaseObject) {
+function createEventController ($scope, $stateParams, $firebaseObject, growl) {
   $scope._eventId = $stateParams.eventId;
   _loadEvent();
 
@@ -82,6 +82,7 @@ function createEventController ($scope, $stateParams, $firebaseObject) {
         console.log("Data could not be saved." + error);
       } else {
         console.log("Data saved successfully.");
+        growl.success('Event Data saved successfully');
         $scope._eventId = _eventId;
         $scope.$apply();
       }
@@ -138,7 +139,7 @@ function answerEventController ($scope, $stateParams, $firebaseObject, $firebase
   }
 
   function resetPick () {
-    $scope.vm.pickingUser.name = '';
+    $scope.vm.pickingUser.name = User.getUserData() ? User.getUserData().facebook.displayName: '';
     $scope.vm.pickingUser.answers = [];
     $scope.vm.pickingUser.notes = '';
     delete $scope.vm.pickingUser.index;
@@ -176,7 +177,7 @@ function answerEventController ($scope, $stateParams, $firebaseObject, $firebase
 
 }
 
-function chatController ($scope, $stateParams, $firebaseArray, User) {
+function chatController ($scope, $stateParams, $firebaseArray, User, growl) {
   var _eventId = $stateParams.eventId;
   var chatRef = new Firebase(FIREBASE_APP + _eventId + '/chat');
 
@@ -188,7 +189,10 @@ function chatController ($scope, $stateParams, $firebaseArray, User) {
 
   // Deal with facebook acc only currently
   function send(text) {
-    if (!$scope.User) return;
+    if (!$scope.User) {
+      growl.error('Please sign in to enable chat');
+      return;
+    }
     var userdata = $scope.User.facebook;
     var messageObj = {
       user: {
@@ -204,7 +208,7 @@ function chatController ($scope, $stateParams, $firebaseArray, User) {
   }
 
   function formatTime (ts) {
-    return moment(ts).format('MMM Do dd, HH:mm:ss');
+    return moment(ts).format('MMM Do ddd, HH:mm:ss');
   }
 
   //
@@ -338,7 +342,7 @@ function uiPickDatesDirective ($timeout) {
     scope.$watch('note', function () {
       if (!scope.dates[scope.activeDateIndex]) return;
       scope.dates[scope.activeDateIndex].note = scope.note;
-      console.log( 'change note, need apply ?', scope.note );
+      //console.log( 'change note, need apply ?', scope.note );
       iElement.find('[rel="popover"]').popover();
     })
 
@@ -367,8 +371,8 @@ function onRepeatRendered ($timeout) {
       if (scope.$last === true) {
         $timeout(function () {
           //scope.$emit('ngRepeatFinished');
-          console.log( 'parent.vm', scope.$parent.vm.eventData.eventName );
-          var func = scope.$parent[attrs.onRepeatRendered];
+          console.log( 'parent.vm', scope.vm.eventData.eventName );
+          var func = scope[attrs.onRepeatRendered];
           if (typeof func === 'function') {
             func();
           }
@@ -377,6 +381,22 @@ function onRepeatRendered ($timeout) {
     }
   }
 }
+
+choseisanApp.directive('focusMe', function($timeout) {
+  return {
+    scope: { trigger: '=focusMe' },
+    link: function(scope, element) {
+      scope.$watch('trigger', function(value) {
+        if(value === true) {
+          //console.log('trigger',value);
+          $timeout(function() {
+            element[0].focus();
+          });
+        }
+      });
+    }
+  };
+});
 
 // Service store login session
 function UserService () {

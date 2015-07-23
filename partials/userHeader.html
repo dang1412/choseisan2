@@ -2,10 +2,12 @@
 
   <form class="navbar-form navbar-right" id="login-form" role="form" data-ng-if="!loginStatus">
   	<!-- <input type="hidden" name="redirect_to" value=""> -->
+    <!-- Single button -->
   	<div class="btn-group login-group">
 
-  	  <a type="button" href="#!/auth/login" class="btn btn-success"><i class="fa fa-user"></i>&nbsp;Sign In</a>
-  	  <a type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></a>
+  	  <button class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="fa fa-user"></i>&nbsp;Sign In <span class="caret"></span>
+      </button>
   	  <ul class="dropdown-menu" role="menu">
   	  	<!-- <li><a href="#">
   	    	<i class="fa fa-github"></i>&nbsp; Github
