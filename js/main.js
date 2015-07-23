@@ -65,7 +65,7 @@ function createEventController ($scope, $stateParams, $firebaseObject, growl) {
     var _eventId = $stateParams.eventId;
     var ref = new Firebase(FIREBASE_APP + _eventId + '/event');
     ref.on('value', function (snap) {
-      $scope.vm = snap.val();
+      $scope.vm = snap.val() || { dates: [] }; // init dates to use with pickDate directive
     })
   }
 
