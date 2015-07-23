@@ -1,13 +1,20 @@
 #create_event {
   margin-top: 100px;
 }
-#create_event .dates .date i {
+#create_event .dates .date i.del {
   float: right;
   cursor: pointer;
   display: none;
 }
-#create_event .dates .date:hover i {
+#create_event .dates .date:hover i.del {
   display: inline-block;
+}
+#create_event .dates .date .note {
+  position: absolute;
+  right: 35px;
+}
+#create_event .dates .date .popover-content {
+  color: black;
 }
 #answer_event {
   margin-top: 50px;
@@ -19,6 +26,12 @@
   cursor: pointer;
   color: blue;
   max-width: 50px;
+}
+#answer_event .table thead > tr > th {
+  border: none;
+}
+#answer_event .table .date-col {
+  max-width: 100px;
 }
 #answer_event .modal .remove {
   float: right;

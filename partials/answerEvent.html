@@ -6,34 +6,58 @@
 
   <div class="event-head clearfix">
     <div class="event-name pull-left">{{vm.eventData.eventName}}</div>
-    <a class="btn btn-edit-event"><i class="fa fa-pencil"></i></a>
+    <a class="btn btn-edit-event" href="/choseisan2/#/edit/{{_eventId}}"><i class="fa fa-pencil"></i></a>
     <div class="answer-btn pull-right">
       <span class="btn btn-default btn-lg" data-toggle="modal" data-target="#answerModal" data-ng-click="resetPick();"><i class="fa fa-pencil-square-o"></i>&nbsp;Answer</span>
     </div>
   </div>
   <div class="event-des"><p>{{vm.eventData.eventDescription}}</p></div>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Dates</th>
-        <th data-ng-repeat="user in vm.users" class="name-header" data-ng-click="pickUser($index)" data-toggle="modal" data-target="#answerModal">{{user.name}}</th>
-      </tr>
-    </thead>
-    <tr data-ng-repeat="date in vm.eventData.dates" data-ng-init="date_ind = $index">
-      <td>{{date}}</td>
-      <td data-ng-repeat="user in vm.users">
-        <label class="btn btn-default"
-          data-ng-class="{'btn-success': user.answers[date_ind].ans === '0', 'btn-warning': user.answers[date_ind].ans === '1','btn-danger': user.answers[date_ind].ans === '2'}">
-          <i class="fa fa-check" data-ng-show="user.answers[date_ind].ans === '0'"></i>
-          <i class="fa fa-circle-o" data-ng-show="user.answers[date_ind].ans === '1'"></i>
-          <i class="fa fa-close" data-ng-show="user.answers[date_ind].ans === '2'"></i>
-        </label>
-        <a class="note" data-ng-show="user.answers[date_ind].note" data-placement="top" rel="popover" data-trigger="hover" data-content="{{user.answers[date_ind].note}}">
-          <i class="fa fa-file-text-o"></i>
+  <div class="row">
+    <!-- dates list -->
+    <!-- <div class="col-md-3">
+      <div class="list-group dates">
+        <a ng-repeat="date in vm.eventData.dates" class="list-group-item date">
+          {{date.date}}
+          <span class="note" data-ng-show="date.note" data-placement="top" rel="popover" data-trigger="hover" data-content="{{date.note}}">
+            <i class="fa fa-file-text-o"></i>
+          </span>
         </a>
-      </td>
-    </tr>
-  </table>
+      </div>
+    </div> -->
+
+    <!-- users answer list -->
+    <!-- <div class="col-md-9">
+    </div> -->
+    <div class="col-md-12">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Dates</th>
+            <th data-ng-repeat="user in vm.users" class="name-header" data-ng-click="pickUser($index)" data-toggle="modal" data-target="#answerModal">{{user.name}}</th>
+          </tr>
+        </thead>
+        <tr data-ng-repeat="date in vm.eventData.dates" data-ng-init="date_ind = $index">
+          <td class="date-col">{{date.date}}
+            <span class="note" data-ng-show="date.note" data-placement="top" rel="popover" data-trigger="hover" data-content="{{date.note}}">
+              <i class="fa fa-file-text-o"></i>
+            </span>
+          </td>
+          <td data-ng-repeat="user in vm.users">
+            <label class="btn btn-default"
+              data-ng-class="{'btn-success': user.answers[date_ind].ans === '0', 'btn-warning': user.answers[date_ind].ans === '1','btn-danger': user.answers[date_ind].ans === '2'}">
+              <i class="fa fa-check" data-ng-show="user.answers[date_ind].ans === '0'"></i>
+              <i class="fa fa-circle-o" data-ng-show="user.answers[date_ind].ans === '1'"></i>
+              <i class="fa fa-close" data-ng-show="user.answers[date_ind].ans === '2'"></i>
+            </label>
+            <a class="note" data-ng-show="user.answers[date_ind].note" data-placement="top" rel="popover" data-trigger="hover" data-content="{{user.answers[date_ind].note}}">
+              <i class="fa fa-file-text-o"></i>
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
 
   <!-- Chat -->
   <div data-ng-controller="chatController">
@@ -106,7 +130,7 @@
                 <div href="#" class="list-group-item clearfix" data-ng-repeat="date in vm.eventData.dates" on-repeat-rendered="pickUserRendered">
 
                   <div class="col-sm-6">
-                    <h4><span class="answer-date label label-success">{{date}}</span></h4>
+                    <h4><span class="answer-date label label-success">{{date.date}}</span></h4>
                   </div>
 
                   <div class="col-sm-6">

@@ -13,7 +13,7 @@
   	    <li><a href="#">
   	    	<i class="fa fa-linkedin"></i>&nbsp; LinkedIn
   	    </a></li> -->
-  	    <li><a href="#" data-ng-click="login('facebook')">
+  	    <li><a href="#" data-ng-click="$event.preventDefault();login('facebook');">
   	    	<i class="fa fa-facebook"></i>&nbsp; Facebook
   	    </a></li>
   	    <!-- <li><a href="#">
@@ -36,7 +36,7 @@
         <!-- Dropdown menu -->
         <ul class="dropdown-menu">
           <li>
-            <a href="#" data-ng-click="logout();">Sign out</a>
+            <a href="#" data-ng-click="$event.preventDefault();logout();">Sign out</a>
           </li>
         </ul>
 

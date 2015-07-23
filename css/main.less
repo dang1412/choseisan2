@@ -2,13 +2,20 @@
   margin-top: 100px;
   .dates {
     .date {
-      i {
+      i.del {
         float: right;
         cursor: pointer;
         display: none;
       }
-      &:hover i {
+      &:hover i.del {
         display: inline-block;
+      }
+      .note {
+        position: absolute;
+        right: 35px;
+      }
+      .popover-content {
+        color: black;
       }
     }
   }
@@ -24,6 +31,12 @@
       cursor: pointer;
       color: blue;
       max-width: 50px;
+    }
+    thead>tr>th {
+      border: none;
+    }
+    .date-col {
+      max-width: 100px;
     }
   }
   .modal {
