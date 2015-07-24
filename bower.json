@@ -3,7 +3,7 @@
   "dependencies": {
     "eonasdan-bootstrap-datetimepicker": "latest",
     "angular-growl-v2": "latest",
-    "angular-animate": "latest"
-
+    "angular-animate": "latest",
+    "angular-google-maps": "~2.1.5"
   }
 }

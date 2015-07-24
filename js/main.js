@@ -3,7 +3,7 @@ var FIREBASE_ROOT = 'https://shining-fire-6123.firebaseio.com/',
   FIREBASE_APP = 'https://shining-fire-6123.firebaseio.com/projects/choseisan2/';
 
 // Define Module with dependencies
-var choseisanApp = angular.module('choseisanApp',['firebase','ui.router', 'angular-growl', 'ngAnimate']);
+var choseisanApp = angular.module('choseisanApp',['firebase','ui.router', 'angular-growl', 'ngAnimate', 'uiGmapgoogle-maps']);
 
 // Setup Router
 choseisanApp.config(function($stateProvider, $urlRouterProvider) {
@@ -39,11 +39,19 @@ choseisanApp.config(function($stateProvider, $urlRouterProvider) {
   .config(['growlProvider', function (growlProvider) {
     growlProvider.globalTimeToLive(3000);
     growlProvider.globalDisableCountDown(true);
+  }])
+  // Google api map provider
+  .config(['uiGmapGoogleMapApiProvider', function(GoogleMapApiProviders) {
+    GoogleMapApiProviders.configure({
+        key: 'AIzaSyCAVu08BeFOw3_gEmVr740Av45UdmZY91I',
+        v: '3.17',
+        libraries: 'weather,geometry,visualization,places'
+    });
   }]);
 
 // Setup Controller
 choseisanApp.controller('createEventController', ['$scope', '$stateParams', '$firebaseObject', 'growl', createEventController])
-  .controller('answerEventController', ['$scope', '$stateParams', '$firebaseObject', '$firebaseArray', 'growl', 'User', answerEventController])
+  .controller('answerEventController', ['$scope', '$stateParams', '$firebaseObject', '$firebaseArray', 'growl', 'User', 'uiGmapGoogleMapApi', 'uiGmapIsReady', answerEventController])
   .controller('chatController', ['$scope', '$stateParams', '$firebaseArray', 'User', 'growl', chatController])
   .controller('userController', ['$scope', '$rootScope', '$timeout', 'User', userController]);
 
@@ -91,7 +99,7 @@ function createEventController ($scope, $stateParams, $firebaseObject, growl) {
 
 }
 
-function answerEventController ($scope, $stateParams, $firebaseObject, $firebaseArray, growl, User) {
+function answerEventController ($scope, $stateParams, $firebaseObject, $firebaseArray, growl, User, uiGmapGoogleMapApi, uiGmapIsReady) {
   var finishedRender = false;
   var _eventId = $stateParams.eventId;  // get parameter from path
   $scope._eventId = _eventId;
@@ -103,6 +111,63 @@ function answerEventController ($scope, $stateParams, $firebaseObject, $firebase
   $scope.vm.users = $firebaseArray(ref.child('Users')); // Use Angularfire array - 3 ways binding with Event's Users
   $scope.vm.users.$watch( firebaseArrayWatch );
   $scope.vm.pickingUser = {name: '', answers: [], notes: '', index: -1}; // User data that display in modal
+
+  // gmap { latitude: 35.6429309, longitude: 139.7481166 }
+  $scope.map = { center: { latitude: 0.6429309, longitude: 0.7481166 }, zoom: 15, control: {} };
+  uiGmapGoogleMapApi.then(function(maps) {
+    //window.maps = maps;
+    var pyrmont = new google.maps.LatLng(-33.8665433,151.1956316);
+
+    uiGmapIsReady.promise()                     // this gets all (ready) map instances - defaults to 1 for the first map
+      .then(function(instances) {                 // instances is an array object
+        var map = instances[0].map;            // if only 1 map it's found at index 0 of array
+        //$scope.myOnceOnlyFunction(maps);        // pass the map to your function
+        var infoWindow = new maps.InfoWindow();
+
+        var request = {
+          //location: pyrmont,
+          //radius: '500',
+          query: '東京都港区芝浦3-14-1'
+        };
+
+        var service = new maps.places.PlacesService(map);
+        service.textSearch(request, function (results, status) {
+          if (status == maps.places.PlacesServiceStatus.OK) {
+            console.log('Search Ok', status, results[0]);
+            map.setCenter(results[0].geometry.location);
+            createMarker(results[0]);
+          }
+        });
+
+        function createMarker(place) {
+          var marker = new maps.Marker({
+            map: map,
+            position: place.geometry.location
+            // icon: {
+            //   // Star
+            //   //path: 'M 0,-24 6,-7 24,-7 10,4 15,21 0,11 -15,21 -10,4 -24,-7 -6,-7 z',
+            //   fillColor: '#ffff00',
+            //   fillOpacity: 1,
+            //   scale: 1/4,
+            //   strokeColor: '#bd8d2c',
+            //   strokeWeight: 1
+            // }
+          });
+
+          maps.event.addListener(marker, 'click', function() {
+            service.getDetails(place, function(result, status) {
+              if (status != maps.places.PlacesServiceStatus.OK) {
+                alert(status);
+                return;
+              }
+              infoWindow.setContent(result.name);
+              infoWindow.open(map, marker);
+            });
+          });
+        }
+      });
+
+  });
 
   // functions
   $scope.upsertUser = upsertUser;
@@ -186,6 +251,7 @@ function chatController ($scope, $stateParams, $firebaseArray, User, growl) {
 
   $scope.send = send;
   $scope.formatTime = formatTime;
+  $scope.keyDown = keyDown;
 
   // Deal with facebook acc only currently
   function send(text) {
@@ -209,6 +275,21 @@ function chatController ($scope, $stateParams, $firebaseArray, User, growl) {
 
   function formatTime (ts) {
     return moment(ts).format('MMM Do ddd, HH:mm:ss');
+  }
+
+  function keyDown (e) {
+    $scope.hold[e.keyCode]=true;
+    if ($scope.hold[16]) {  // preventDefault if hold shift
+      e.preventDefault();
+      if (e.keyCode === 13) { // new line
+        $scope.message += '\n';
+      }
+    }
+    else if (e.keyCode === 13) {// enter without hold shift
+      e.preventDefault();
+      send( $scope.message );
+    }
+    //console.log(e.keyCode);
   }
 
   //

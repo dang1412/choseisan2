@@ -59,34 +59,57 @@
 
   </div>
 
-  <!-- Chat -->
-  <div data-ng-controller="chatController">
-    <div id="firechat-wrapper">
-      <!-- Chat contents -->
-      <div class="chat-contents clearfix">
-        <div class="message-contain" data-ng-repeat="message in vm.messages">
-          <div class="media">
-            <div class="media-left">
-              <a href="#">
-                <img class="media-object picture" src="http://graph.facebook.com/{{message.user.id}}/picture" alt="...">
-              </a>
-            </div>
-            <div class="media-body">
-              <a href="#"><h4 class="media-heading name">{{message.user.name}}</h4></a>
-              <span class="livetimestamp">{{formatTime(message.timestamp)}}</span>
-              <p class="content">{{message.content}}</p>
-            </div>
+  <div class="row">
+    <div class="col-md-5">
+      <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="#home" role="tab" data-toggle="tab">Map</a></li>
+        <li role="presentation"><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
+      </ul>
+
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="home">
+          <!-- Map -->
+          <div class="map-container">
+            <ui-gmap-google-map center="map.center" zoom="map.zoom" control="map.control"></ui-gmap-google-map>
           </div>
         </div>
-
+        <div role="tabpanel" class="tab-pane" id="profile">Nha chi Lan: 東京都港区芝浦3-14-1</div>
       </div>
 
-      <!-- Chat input -->
-      <div class="chat-input">
-        <div class="form-group">
-          <textarea type="text" class="form-control" placeholder="Your message..." data-ng-model="message"></textarea>
-        </div><!-- /input-group -->
-        <span class="btn btn-default btn-send" data-ng-click="send(message);">Send</span>
+    </div>
+    <div class="col-md-7">
+      <!-- Chat -->
+      <div data-ng-controller="chatController">
+        <div id="firechat-wrapper">
+          <!-- Chat contents -->
+          <div class="chat-contents clearfix">
+            <div class="message-contain" data-ng-repeat="message in vm.messages">
+              <div class="media">
+                <div class="media-left">
+                  <a href="#">
+                    <img class="media-object picture" src="http://graph.facebook.com/{{message.user.id}}/picture" alt="...">
+                  </a>
+                </div>
+                <div class="media-body">
+                  <a href="#"><h4 class="media-heading name">{{message.user.name}}</h4></a>
+                  <span class="livetimestamp">{{formatTime(message.timestamp)}}</span>
+                  <p class="content">{{message.content}}</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Chat input -->
+          <div class="chat-input">
+            <div class="form-group input-message">
+              <textarea type="text" data-ng-init="hold={};" data-ng-keydown="keyDown($event)" data-ng-keyup="hold[$event.keyCode]=false;" class="form-control" placeholder="Your message..." data-ng-model="message"></textarea>
+            </div><!-- /input-group -->
+            <!-- <span class="btn btn-default btn-send" data-ng-click="send(message);">Send</span> -->
+            <span class="note">Enter to send message, Shift+Enter to break line</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
