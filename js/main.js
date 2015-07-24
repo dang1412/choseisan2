@@ -280,9 +280,9 @@ function chatController ($scope, $stateParams, $firebaseArray, User, growl) {
   function keyDown (e) {
     $scope.hold[e.keyCode]=true;
     if ($scope.hold[16]) {  // preventDefault if hold shift
-      e.preventDefault();
       if (e.keyCode === 13) { // new line
-        $scope.message += '\n';
+
+        //$scope.message += '\n';
       }
     }
     else if (e.keyCode === 13) {// enter without hold shift

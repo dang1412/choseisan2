@@ -54,22 +54,37 @@
 #answer_event .note {
   cursor: pointer;
 }
-#answer_event #firechat-wrapper .picture {
+#answer_event #firechat-wrapper .chat-contents {
+  max-height: 400px;
+  overflow-y: scroll;
+}
+#answer_event #firechat-wrapper .chat-contents::-webkit-scrollbar {
+  width: 12px;
+}
+#answer_event #firechat-wrapper .chat-contents::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+#answer_event #firechat-wrapper .chat-contents::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+#answer_event #firechat-wrapper .chat-contents .picture {
   border-radius: 100%;
   width: 45px;
   height: 45px;
 }
-#answer_event #firechat-wrapper .name {
+#answer_event #firechat-wrapper .chat-contents .name {
   font-size: 16px;
   font-weight: bold;
   display: inline-block;
 }
-#answer_event #firechat-wrapper .livetimestamp {
+#answer_event #firechat-wrapper .chat-contents .livetimestamp {
   color: grey;
   font-size: 12px;
   margin-right: 5px;
 }
-#answer_event #firechat-wrapper .content {
+#answer_event #firechat-wrapper .chat-contents .content {
   padding: 10px;
   border-radius: 10px;
   background-color: aliceblue;
@@ -78,6 +93,7 @@
   text-align: right;
 }
 #answer_event #firechat-wrapper .chat-input .input-message {
+  margin-top: 5px;
   margin-bottom: 0;
 }
 #answer_event #firechat-wrapper .chat-input .note {
