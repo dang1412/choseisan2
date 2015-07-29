@@ -1,0 +1,14 @@
+<div class="row">
+  <div class="col-md-4"></div>
+  <!-- Map -->
+  <div class="col-md-8 map-container">
+    <ui-gmap-google-map center="map.center" zoom="map.zoom" control="map.control"></ui-gmap-google-map>
+
+    <form data-ng-submit="search()">
+      <div class="form-group">
+        <input type="text" class="form-control" id="" data-ng-model="searchText" placeholder="Search Place" data-ng-keydown="typeSearch($event)">
+      </div>
+    </form>
+
+  </div>
+</div>

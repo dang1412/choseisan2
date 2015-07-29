@@ -58,6 +58,8 @@ choseisanApp.controller('createEventController', ['$scope', '$stateParams', '$fi
 // Directives
 choseisanApp.directive('uiPickDates', uiPickDatesDirective);
 
+choseisanApp.directive('uiPickLocation', ['$timeout', 'uiGmapGoogleMapApi', 'uiGmapIsReady', uiPickLocation]);
+
 choseisanApp.directive('onRepeatRendered', onRepeatRendered);
 
 // Services
@@ -442,6 +444,83 @@ function uiPickDatesDirective ($timeout) {
     }
   }
 }
+
+function uiPickLocation ($timeout, uiGmapGoogleMapApi, uiGmapIsReady) {
+
+  var Maps = null, mapInstance = null;
+  // init Google Maps
+  uiGmapGoogleMapApi.then(function(maps) {
+    Maps = maps;
+  });
+
+  uiGmapIsReady.promise()                     // this gets all (ready) map instances - defaults to 1 for the first map
+    .then(function(instances) {                 // instances is an array object
+      mapInstance = instances[0].map;
+    });
+
+  return {
+    restrict: 'EA',
+    require: '?ngModel',
+    templateUrl: '/choseisan2/partials/uiPickLocation.html',
+    compile: function compile() {
+      // Require CodeMirror
+      return postLink;
+    }
+  };
+
+  function postLink (scope, iElement, iAttrs, ngModel) {
+    scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 9, control: {} };
+
+    scope.search = search;
+    scope.typeSearch = typeSearch;
+
+    ngModel.$formatters.push(function(value) {
+      // make sure the model is an array
+      // if (value === null || !angular.isArray(value)) {
+      //   return [];
+      // }
+      // return value;
+    });
+    ngModel.$render = function() {
+      //expects an array so make sure it gets one
+      //Although the formatter have already done this, it can be possible that another formatter returns undefined (for example the required directive)
+      scope.searchText = ngModel.$viewValue || null;
+    };
+
+    // watch note to sync with current date.note
+    scope.$watch('searchText', function () {
+      ngModel.$setViewValue(scope.searchText);
+    });
+
+    // TODO check null Maps & mapInstance
+    function search() {
+      if (Maps === null || mapInstance === null) {
+        console.log('Maps not ready yet!');
+        return;
+      }
+      var request = {
+        query: '東京都港区芝浦3-14-1'
+      };
+
+      var service = new Maps.places.PlacesService(mapInstance);
+      service.textSearch({query: scope.searchText}, function (results, status) {
+        if (status == Maps.places.PlacesServiceStatus.OK) {
+          console.log('Search Ok', status, results[0]);
+          mapInstance.setCenter(results[0].geometry.location);
+          //createMarker(results[0]);
+        }
+      });
+    }
+
+    function typeSearch(e) {
+      if (e.keyCode === 13) {
+        e.preventDefault();
+        search();
+      }
+    }
+  }
+}
+
 
 // Repeat Render Finished Directive
 function onRepeatRendered ($timeout) {

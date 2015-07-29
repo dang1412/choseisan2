@@ -16,6 +16,9 @@
 #create_event .dates .date .popover-content {
   color: black;
 }
+#create_event .angular-google-map-container {
+  height: 400px;
+}
 #answer_event {
   margin-top: 50px;
 }
