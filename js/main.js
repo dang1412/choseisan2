@@ -104,75 +104,28 @@ function createEventController ($scope, $state, $stateParams, $firebaseObject, $
 
 }
 
-function answerEventController ($scope, $stateParams, $firebaseObject, $firebaseArray, growl, UserService, uiGmapGoogleMapApi, uiGmapIsReady) {
+function answerEventController ($scope, $stateParams, $firebaseObject, $firebaseArray, growl, UserService, uiGmapGoogleMapApi, uiGmapIsReady, $timeout) {
   var finishedRender = false;
   var _eventId = $stateParams.eventId;  // get parameter from path
   $scope._eventId = _eventId;
 
+  $scope.vm = {}; // Init scope's view model variable
   // download the data into a local object
   var ref = new Firebase(FIREBASE_APP + _eventId + '/event');
-  $scope.vm = {}; // Init scope's view model variable
-  $scope.vm.eventData = $firebaseObject(ref);  // Display event informations
+  ref.on('value', function (snap) {
+    $scope.vm.eventData = snap.val() || { dates: [] }; // init dates to use with pickDate directive
+    $timeout(function () {
+      $scope.$apply();
+      _loadmap();
+    });
+  });
+  //$scope.vm.eventData = $firebaseObject(ref);  // Display event informations
   $scope.vm.users = $firebaseArray(ref.child('Users')); // Use Angularfire array - 3 ways binding with Event's Users
   $scope.vm.users.$watch( firebaseArrayWatch );
   $scope.vm.pickingUser = {name: '', answers: [], notes: '', index: -1}; // User data that display in modal
 
   // gmap { latitude: 35.6429309, longitude: 139.7481166 }
   $scope.map = { center: { latitude: 0.6429309, longitude: 0.7481166 }, zoom: 15, control: {} };
-  uiGmapGoogleMapApi.then(function(maps) {
-    //window.maps = maps;
-    var pyrmont = new google.maps.LatLng(-33.8665433,151.1956316);
-
-    uiGmapIsReady.promise()                     // this gets all (ready) map instances - defaults to 1 for the first map
-      .then(function(instances) {                 // instances is an array object
-        var map = instances[0].map;            // if only 1 map it's found at index 0 of array
-        //$scope.myOnceOnlyFunction(maps);        // pass the map to your function
-        var infoWindow = new maps.InfoWindow();
-
-        var request = {
-          //location: pyrmont,
-          //radius: '500',
-          query: '東京都港区芝浦3-14-1'
-        };
-
-        var service = new maps.places.PlacesService(map);
-        service.textSearch(request, function (results, status) {
-          if (status == maps.places.PlacesServiceStatus.OK) {
-            console.log('Search Ok', status, results[0]);
-            map.setCenter(results[0].geometry.location);
-            createMarker(results[0]);
-          }
-        });
-
-        function createMarker(place) {
-          var marker = new maps.Marker({
-            map: map,
-            position: place.geometry.location
-            // icon: {
-            //   // Star
-            //   //path: 'M 0,-24 6,-7 24,-7 10,4 15,21 0,11 -15,21 -10,4 -24,-7 -6,-7 z',
-            //   fillColor: '#ffff00',
-            //   fillOpacity: 1,
-            //   scale: 1/4,
-            //   strokeColor: '#bd8d2c',
-            //   strokeWeight: 1
-            // }
-          });
-
-          maps.event.addListener(marker, 'click', function() {
-            service.getDetails(place, function(result, status) {
-              if (status != maps.places.PlacesServiceStatus.OK) {
-                alert(status);
-                return;
-              }
-              infoWindow.setContent(result.name);
-              infoWindow.open(map, marker);
-            });
-          });
-        }
-      });
-
-  });
 
   // functions
   $scope.upsertUser = upsertUser;
@@ -245,6 +198,67 @@ function answerEventController ($scope, $stateParams, $firebaseObject, $firebase
   $scope.editmemo = []; //
   $scope.confirmDelete = false;
 
+  function _loadmap() {
+
+    uiGmapGoogleMapApi.then(function(maps) {
+      //window.maps = maps;
+      var pyrmont = new google.maps.LatLng(-33.8665433,151.1956316);
+      console.log('uiGmapGoogleMapApi ready');
+      uiGmapIsReady.promise()                     // this gets all (ready) map instances - defaults to 1 for the first map
+        .then(function(instances) {                 // instances is an array object
+          console.log('uiGmapIsReady ready');
+          var map = instances[0].map;            // if only 1 map it's found at index 0 of array
+          //$scope.myOnceOnlyFunction(maps);        // pass the map to your function
+          var infoWindow = new maps.InfoWindow();
+
+          var request = {
+            //location: pyrmont,
+            //radius: '500',
+            //query: '東京都港区芝浦3-14-1'
+            query: $scope.vm.eventData.address || ''
+          };
+          console.log('$scope.vm.eventData.address', $scope.vm.eventData.address);
+
+          var service = new maps.places.PlacesService(map);
+          service.textSearch(request, function (results, status) {
+            if (status == maps.places.PlacesServiceStatus.OK) {
+              //console.log('Search Ok', status, results[0]);
+              map.setCenter(results[0].geometry.location);
+              createMarker(results[0]);
+            }
+          });
+
+          function createMarker(place) {
+            var marker = new maps.Marker({
+              map: map,
+              position: place.geometry.location
+              // icon: {
+              //   // Star
+              //   //path: 'M 0,-24 6,-7 24,-7 10,4 15,21 0,11 -15,21 -10,4 -24,-7 -6,-7 z',
+              //   fillColor: '#ffff00',
+              //   fillOpacity: 1,
+              //   scale: 1/4,
+              //   strokeColor: '#bd8d2c',
+              //   strokeWeight: 1
+              // }
+            });
+
+            maps.event.addListener(marker, 'click', function() {
+              service.getDetails(place, function(result, status) {
+                if (status != maps.places.PlacesServiceStatus.OK) {
+                  alert(status);
+                  return;
+                }
+                infoWindow.setContent(result.name);
+                infoWindow.open(map, marker);
+              });
+            });
+          }
+        });
+
+    });
+
+  }
 }
 
 function chatController ($scope, $stateParams, $firebaseArray, UserService, growl) {
@@ -479,7 +493,9 @@ function uiPickLocation ($timeout, uiGmapGoogleMapApi, uiGmapIsReady) {
 
   uiGmapIsReady.promise()                     // this gets all (ready) map instances - defaults to 1 for the first map
     .then(function(instances) {                 // instances is an array object
-      mapInstance = instances[0].map;
+      //debugger
+      //mapInstance = instances[0].map;
+      console.log( 'uiGmapIsReady' );
     });
 
   return {
@@ -493,7 +509,7 @@ function uiPickLocation ($timeout, uiGmapGoogleMapApi, uiGmapIsReady) {
   };
 
   function postLink (scope, iElement, iAttrs, ngModel) {
-    scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 9, control: {} };
+    scope.map = { center: { latitude: 45, longitude: -73 }, zoom: 15, control: {} };
 
     scope.search = search;
     scope.typeSearch = typeSearch;
@@ -503,12 +519,17 @@ function uiPickLocation ($timeout, uiGmapGoogleMapApi, uiGmapIsReady) {
       // if (value === null || !angular.isArray(value)) {
       //   return [];
       // }
-      // return value;
+      return value;
     });
     ngModel.$render = function() {
       //expects an array so make sure it gets one
       //Although the formatter have already done this, it can be possible that another formatter returns undefined (for example the required directive)
       scope.searchText = ngModel.$viewValue || null;
+      if (scope.searchText) {
+        $timeout(function () {
+          search();
+        });
+      }
     };
 
     // watch note to sync with current date.note
@@ -518,20 +539,23 @@ function uiPickLocation ($timeout, uiGmapGoogleMapApi, uiGmapIsReady) {
 
     // TODO check null Maps & mapInstance
     function search() {
+      mapInstance = scope.map.control.getGMap ? scope.map.control.getGMap() : null;
       if (Maps === null || mapInstance === null) {
         console.log('Maps not ready yet!');
         return;
       }
-      var request = {
-        query: '東京都港区芝浦3-14-1'
-      };
+      // var request = {
+      //   query: '東京都港区芝浦3-14-1'
+      // };
 
       var service = new Maps.places.PlacesService(mapInstance);
       service.textSearch({query: scope.searchText}, function (results, status) {
         if (status == Maps.places.PlacesServiceStatus.OK) {
-          console.log('Search Ok', status, results[0]);
-          mapInstance.setCenter(results[0].geometry.location);
-          //createMarker(results[0]);
+          //console.log('Search Ok', status, results[0]);
+          $timeout(function () {
+            mapInstance.setCenter(results[0].geometry.location);
+            //createMarker(results[0]);
+          });
         }
       });
     }
