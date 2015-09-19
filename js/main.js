@@ -162,7 +162,7 @@ function answerEventController ($scope, $stateParams, $firebaseObject, $firebase
   }
 
   function resetPick () {
-    $scope.vm.pickingUser.name = User.getUserData() ? User.getUserData().facebook.displayName: '';
+    $scope.vm.pickingUser.name = UserService.getUserData() ? UserService.getUserData().facebook.displayName: '';
     $scope.vm.pickingUser.answers = [];
     $scope.vm.pickingUser.notes = '';
     delete $scope.vm.pickingUser.index;
@@ -314,7 +314,7 @@ function chatController ($scope, $stateParams, $firebaseArray, UserService, grow
   //
   $scope.$on('loggedin', function () {
     console.log( 'chatController logged in' );
-    $scope.User = User.getUserData();
+    $scope.User = UserService.getUserData();
   });
   $scope.$on('loggedout', function () {
     console.log( 'chatController logged out' );
