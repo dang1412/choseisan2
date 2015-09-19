@@ -1,5 +1,5 @@
 <!-- header -->
-<nav class="navbar navbar-inverse navbar-static-top">
+<nav class="navbar navbar-inverse navbar-static-top header" data-ng-controller="userController">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -16,8 +16,46 @@
         <li data-ng-class="{'active': part=='choseisan' }"><a href="/choseisan2/#/">Choseisan</a></li>
       </ul>
 
+      <div class="navbar-form navbar-right" ng-if="state === 'home' || state === 'editEvent'">
+        <a href="" class="btn btn-danger" ng-click="createEvent()">
+          <span data-ng-hide="_eventId">Create Event</span>
+          <span data-ng-show="_eventId">Update</span>
+        </a>
+        <a href="/choseisan2/#/{{_eventId}}" class="btn btn-default" data-ng-show="_eventId">Cancel</a>
+      </div>
+
+
       <!-- Login Controller -->
-      <div data-ng-include="'/choseisan2/partials/userHeader.html'"></div>
+      <!-- <div data-ng-include="'/choseisan2/partials/userHeader.html'"></div> -->
+
+      <form class="navbar-form navbar-right" data-ng-if="!loginStatus">
+        <div class="btn-group login-group">
+          <button class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-user"></i>&nbsp;Sign In <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#" data-ng-click="$event.preventDefault();login('facebook');">
+              <i class="fa fa-facebook"></i>&nbsp; Facebook
+            </a></li>
+          </ul>
+        </div>
+      </form>
+
+      <ul class="nav navbar-nav navbar-right" data-ng-if="loginStatus">
+        <li class="user user-menu">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <i class="glyphicon glyphicon-user"></i>
+            <span>{{displayName}} <i class="caret"></i></span>
+          </a>
+          <!-- Dropdown menu -->
+          <ul class="dropdown-menu">
+            <li>
+              <a href="#" data-ng-click="$event.preventDefault();logout();">Sign out</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
     </div><!--/.nav-collapse -->
   </div>
 </nav>

@@ -1,36 +1,23 @@
 <div class="navbar-right" data-ng-controller="userController">
 
-  <form class="navbar-form navbar-right" id="login-form" role="form" data-ng-if="!loginStatus">
+  <!-- <form class="navbar-form navbar-right" id="login-form" role="form"> -->
   	<!-- <input type="hidden" name="redirect_to" value=""> -->
     <!-- Single button -->
-  	<div class="btn-group login-group">
 
-  	  <button class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fa fa-user"></i>&nbsp;Sign In <span class="caret"></span>
-      </button>
-  	  <ul class="dropdown-menu" role="menu">
-  	  	<!-- <li><a href="#">
-  	    	<i class="fa fa-github"></i>&nbsp; Github
-  	    </a></li>
-  	    <li><a href="#">
-  	    	<i class="fa fa-linkedin"></i>&nbsp; LinkedIn
-  	    </a></li> -->
-  	    <li><a href="#" data-ng-click="$event.preventDefault();login('facebook');">
-  	    	<i class="fa fa-facebook"></i>&nbsp; Facebook
-  	    </a></li>
-  	    <!-- <li><a href="#">
-  	    	<i class="fa fa-twitter"></i>&nbsp; Twitter
-  	    </a></li>
-  	    <li><a href="#">
-  	    	<i class="fa fa-google-plus"></i>&nbsp; Google+
-  	    </a></li> -->
-  	  </ul>
-  	</div>
-  </form>
-
-  <div data-ng-if="loginStatus">
     <ul class="nav navbar-nav">
-      <li class="user user-menu">
+
+      <div class="btn-group login-group" data-ng-if="!loginStatus">
+    	  <button class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-user"></i>&nbsp;Sign In <span class="caret"></span>
+        </button>
+    	  <ul class="dropdown-menu" role="menu">
+    	    <li><a href="#" data-ng-click="$event.preventDefault();login('facebook');">
+    	    	<i class="fa fa-facebook"></i>&nbsp; Facebook
+    	    </a></li>
+    	  </ul>
+    	</div>
+
+      <li class="user user-menu" data-ng-if="loginStatus">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
           <i class="glyphicon glyphicon-user"></i>
           <span>{{displayName}} <i class="caret"></i></span>
@@ -41,10 +28,10 @@
             <a href="#" data-ng-click="$event.preventDefault();logout();">Sign out</a>
           </li>
         </ul>
-
       </li>
 
     </ul>
-  </div>
+  <!-- </form> -->
+
 
 </div>

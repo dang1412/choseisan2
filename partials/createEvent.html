@@ -1,12 +1,10 @@
 <div class="create_event" id="create_event" data-ng-controller="createEventController">
   <form data-ng-submit="submitEvent()">
     <div class="form-group">
-      <label for="eventName">Event</label>
-      <input class="form-control" id="eventName" data-ng-model="vm.eventName" placeholder="Name">
+      <input class="form-control" id="eventName" data-ng-model="vm.eventName" placeholder="Event">
     </div>
     <div class="form-group">
-      <label for="eventDescription">Description</label>
-      <textarea class="form-control" id="eventDescription" data-ng-model="vm.eventDescription"></textarea>
+      <textarea class="form-control" id="eventDescription" data-ng-model="vm.eventDescription" placeholder="Description" rows="5"></textarea>
     </div>
     <!-- <div class="checkbox">
       <label>
@@ -21,14 +19,6 @@
     <hr>
     <div ui-pick-dates data-ng-model="vm.dates"></div>
     <div ui-pick-location data-ng-model="vm.address"></div>
-
-
-    <button type="submit" class="btn btn-default">
-      <span data-ng-hide="_eventId">Create Event</span>
-      <span data-ng-show="_eventId">Update</span>
-    </button>
-
-    <a href="/choseisan2/#/{{_eventId}}" class="btn btn-default" data-ng-show="_eventId">Go Event</a>
 
   </form>
 </div>

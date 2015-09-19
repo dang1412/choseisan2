@@ -50,36 +50,38 @@ choseisanApp.config(function($stateProvider, $urlRouterProvider) {
   }]);
 
 // Setup Controller
-choseisanApp.controller('createEventController', ['$scope', '$stateParams', '$firebaseObject', 'growl', createEventController])
-  .controller('answerEventController', ['$scope', '$stateParams', '$firebaseObject', '$firebaseArray', 'growl', 'User', 'uiGmapGoogleMapApi', 'uiGmapIsReady', answerEventController])
-  .controller('chatController', ['$scope', '$stateParams', '$firebaseArray', 'User', 'growl', chatController])
-  .controller('userController', ['$scope', '$rootScope', '$timeout', 'User', userController]);
+choseisanApp.controller('createEventController', ['$scope', '$state', '$stateParams', '$firebaseObject', '$timeout', 'growl', 'UserService', createEventController])
+  .controller('answerEventController', ['$scope', '$stateParams', '$firebaseObject', '$firebaseArray', 'growl', 'UserService', 'uiGmapGoogleMapApi', 'uiGmapIsReady', answerEventController])
+  .controller('chatController', ['$scope', '$stateParams', '$firebaseArray', 'UserService', 'growl', chatController])
+  .controller('userController', ['$scope', '$rootScope', '$state', '$stateParams', '$timeout', 'UserService', userController]);
 
 // Directives
-choseisanApp.directive('uiPickDates', uiPickDatesDirective);
-
-choseisanApp.directive('uiPickLocation', ['$timeout', 'uiGmapGoogleMapApi', 'uiGmapIsReady', uiPickLocation]);
-
-choseisanApp.directive('onRepeatRendered', onRepeatRendered);
+choseisanApp.directive('uiPickDates', uiPickDatesDirective)
+  .directive('uiPickLocation', ['$timeout', 'uiGmapGoogleMapApi', 'uiGmapIsReady', uiPickLocation])
+  .directive('onRepeatRendered', onRepeatRendered);
 
 // Services
-choseisanApp.factory('User', UserService);
+choseisanApp.factory('UserService', UserService);
 
-function createEventController ($scope, $stateParams, $firebaseObject, growl) {
+function createEventController ($scope, $state, $stateParams, $firebaseObject, $timeout, growl, UserService) {
   $scope._eventId = $stateParams.eventId;
+  console.log('_eventId', $scope._eventId);
   _loadEvent();
 
-  $scope.submitEvent = submitEvent;
+  $scope.submitEvent = createEvent;
+  UserService.createEvent = createEvent
 
   function _loadEvent () {
     var _eventId = $stateParams.eventId;
     var ref = new Firebase(FIREBASE_APP + _eventId + '/event');
     ref.on('value', function (snap) {
       $scope.vm = snap.val() || { dates: [] }; // init dates to use with pickDate directive
+      //console.log('snap', snap.val());
+      $timeout(function () { $scope.$apply(); });
     })
   }
 
-  function submitEvent () {
+  function createEvent () {
     var _eventId = $scope._eventId || Math.random().toString(34).slice(2);
     var ref = new Firebase(FIREBASE_APP + _eventId + '/event');
 
@@ -93,15 +95,16 @@ function createEventController ($scope, $stateParams, $firebaseObject, growl) {
       } else {
         console.log("Data saved successfully.");
         growl.success('Event Data saved successfully');
-        $scope._eventId = _eventId;
-        $scope.$apply();
+        //$scope._eventId = _eventId;
+        //$scope.$apply();
+        $state.go('answerEvent', { eventId: _eventId });
       }
     });
   }
 
 }
 
-function answerEventController ($scope, $stateParams, $firebaseObject, $firebaseArray, growl, User, uiGmapGoogleMapApi, uiGmapIsReady) {
+function answerEventController ($scope, $stateParams, $firebaseObject, $firebaseArray, growl, UserService, uiGmapGoogleMapApi, uiGmapIsReady) {
   var finishedRender = false;
   var _eventId = $stateParams.eventId;  // get parameter from path
   $scope._eventId = _eventId;
@@ -244,12 +247,12 @@ function answerEventController ($scope, $stateParams, $firebaseObject, $firebase
 
 }
 
-function chatController ($scope, $stateParams, $firebaseArray, User, growl) {
+function chatController ($scope, $stateParams, $firebaseArray, UserService, growl) {
   var _eventId = $stateParams.eventId;
   var chatRef = new Firebase(FIREBASE_APP + _eventId + '/chat');
 
   $scope.vm.messages = $firebaseArray(chatRef);
-  $scope.User = User.getUserData() || null;
+  $scope.User = UserService.getUserData() || null;
 
   $scope.send = send;
   $scope.formatTime = formatTime;
@@ -305,19 +308,35 @@ function chatController ($scope, $stateParams, $firebaseArray, User, growl) {
   });
 }
 
-function userController ($scope, $rootScope, $timeout, User) {
+function userController ($scope, $rootScope, $state, $stateParams, $timeout, UserService) {
   $scope.loginStatus = false;
   $scope.displayName = '';
 
   // export functions
   $scope.login = login;
   $scope.logout = logout;
+  $scope.createEvent = createEvent;
+  $scope._eventId = $stateParams.eventId;
+  $scope.state = $state.current.name;
+  //console.log('usercontroller eventid', $stateParams );
+
+  $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+      //event.preventDefault();
+      $scope._eventId = $stateParams.eventId;
+      $scope.state = $state.current.name;
+      //console.log($state);
+      $timeout(function () {
+        $scope.$apply();
+      })
+      // transitionTo() promise will be rejected with
+      // a 'transition prevented' error
+  })
 
   // firebase authentication, TODO use User service to store login session
   var appRef = new Firebase(FIREBASE_APP);
   appRef.onAuth(function(authData) {
     console.log(authData);
-    User.setUserData(authData); //  use User service to store login session
+    UserService.setUserData(authData); //  use User service to store login session
     if (authData) {
       $scope.loginStatus = true;
       $scope.displayName = authData.facebook.displayName;
@@ -341,8 +360,13 @@ function userController ($scope, $rootScope, $timeout, User) {
       }
     });
   }
+
   function logout () {
     appRef.unauth();
+  }
+
+  function createEvent () {
+    UserService.createEvent();
   }
 
   // rootScope handle login and logout

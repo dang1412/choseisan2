@@ -1,5 +1,10 @@
 #create_event {
-  margin-top: 100px;
+  margin-top: 60px;
+  margin-bottom: 20px;
+}
+#create_event #eventName {
+  height: 40px;
+  font-size: 15px;
 }
 #create_event .dates .date i.del {
   float: right;
@@ -18,6 +23,10 @@
 }
 #create_event .angular-google-map-container {
   height: 400px;
+}
+#create_event .footer {
+  position: fixed;
+  bottom: 0;
 }
 #answer_event {
   margin-top: 50px;
